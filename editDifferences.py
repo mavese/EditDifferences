@@ -1,5 +1,4 @@
-#Tyler Moore
-#Starter code for HW5 Q1
+#Matteo Mantese
 
 def read_playlist(filename):
     """
@@ -14,35 +13,77 @@ def read_playlist(filename):
 
 def playlist_transform(s,t,compareType="Song"):
     """
-    Computes the edit distance for two playlists s and t, and prints the minimal edits 
+    Computes the edit distance for two playlists s and t, and prints the minimal edits
       required to transform playlist s into playlist t.
     Inputs:
     s: 1st playlist (format: list of (track name, artist, genre) triples)
     t: 2nd playlist (format: list of (track name, artist, genre) triples)
     compareType: String indicating the type of comparison to make.
-       "Song" (default): songs in a playlist are considered equivalent if the 
+       "Song" (default): songs in a playlist are considered equivalent if the
          (song name, artist, genre) triples match.
        "Genre": songs in a playlist are considered equivalent if the same genre is used.
        "Artist": songs in a playlist are considered equivalent if the same artist is used.
     Output: The minimum edit distance and the minimal edits required to transform playlist
       s into playlist t.
     """
-    C,s,t=[],” ”+s,” ”+t 
-    C.append(range(len(t)+1)) 
-    for i in range(len(s)):
+    C=[]
+    s.insert(0,[" ", " ", " "])
+    t.insert(0,[" ", " ", " "])
+    C.append(range(len(t)))
+    for i in range(len(s)-1):
         C.append([i+1])
-    f o r i i n range ( 1 , l e n ( s ) ) : #go t h r o u g h a l l c h a r a c t e r s o f s
-f o r j i n range ( 1 , l e n ( t ) ) :
-#c a s e 1 : c he ck f o r match a t i and j
-i f s [ i ]== t [ j ] : c ma tch = C[ i −1][ j −1]
-e l s e : c ma tch = C[ i −1][ j −1]+1
-#c a s e 2 : t h e r e i s an e x t r a c h a r a c t e r t o i n s e r t
-c i n s = C[ i ] [ j −1]+1
-#c a s e 3 : t h e r e i s an e x t r a c h a r a c t e r t o remove
-c d e l = C[ i −1][ j ]+1
-c mi n=min( c match , c i n s , c d e l )
-C[ i ] . append ( c mi n )
-r e t u r n C[ i ] [ j ]
+    for i in range(1,len(s)):
+        for j in range(1,len(t)):
+            if(compareType == "Song"):
+                if s[i] == t[j]: c_match = C[i-1][j-1]
+                else: c_match = C[i-1][j-1]+1
+            elif(compareType == "Artist"):
+                if s[i][1] == t[j][1]: c_match = C[i-1][j-1]
+                else: c_match = C[i-1][j-1]+1
+            else:
+                if s[i][2] == t[j][2]: c_match = C[i-1][j-1]
+                else: c_match = C[i-1][j-1]+1
+            c_ins = C[i][j-1]+1
+            c_del = C[i-1][j]+1
+            c_min=min(c_match, c_ins, c_del)
+            C[i].append(c_min)
+    for lists in C:
+        print lists
+    k = 0
+    l = 0
+    angle = False
+    down = False
+    prev = 0
+    path = ""
+    while k < len(C)-1 or l < len(C[k])-1:
+        if(k == len(C)-1 and l < len(C[k])-1):
+            l+=1
+        elif(k < len(C)-1 and l == len(C[k])-1):
+            k+=1
+            down = True
+        elif(C[k][l+1]<=C[k+1][l] and C[k][l+1]<=C[k+1][l+1]):
+            l+=1
+        elif(C[k+1][l]<=C[k][l+1] and C[k+1][l]<=C[k+1][l+1]):
+            k+=1
+            down = True
+        else:
+            k+=1
+            l+=1
+            angle = True
+        if(prev == C[k][l]):
+          print "keep {}".format(s[k][0])
+        elif(angle):
+            print "replace {} with {}".format(s[k][0],t[l][0])
+            angle = False
+        elif(down):
+            print "delete {}".format(s[k][0])
+            down = False
+        else:
+            print "insert {}".format(t[l][0])
+        prev = C[k][l]
+        path = path + "({},{})".format(k,l)
+    print path
+    return C[i][j]
 
 
 if __name__=="__main__":
@@ -57,9 +98,9 @@ if __name__=="__main__":
     for song in b2:
         print song
     print "Comparing playlist similarity by song"
-    iter_playlist_transform(b1,b2)
+    print playlist_transform(b1,b2)
     print "Comparing playlist similarity by genre"
-    iter_playlist_transform(b1,b2,"Genre")
+    print playlist_transform(b1,b2,"Genre")
     print "Comparing playlist similarity by artist"
-    iter_playlist_transform(b1,b2,"Artist")
+    print playlist_transform(b1,b2,"Artist")
     #include your own playlists below
