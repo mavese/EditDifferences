@@ -100,3 +100,12 @@ if __name__=="__main__":
     print "Comparing playlist similarity by artist"
     playlist_transform(b1,b2,"Artist")
     #include your own playlists below
+    r1 = read_playlist("rock1.csv")
+    r2 = read_playlist("rock2.csv")
+    print "\n"
+    print "Comparing playlist similarity by song"
+    playlist_transform(r1,r2)
+    print "Comparing playlist similarity by genre"
+    playlist_transform(r1,r2,"Genre")
+    print "Comparing playlist similarity by artist"
+    playlist_transform(r1,r2,"Artist")
